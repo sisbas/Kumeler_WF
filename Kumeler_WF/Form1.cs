@@ -34,6 +34,8 @@ namespace Kumeler_WF
             label4.Text = kumelerim.DortElemanli(eSayisi).ToString();
             label5.Text = kumelerim.BesElemanli(eSayisi).ToString();
             label6.Text = kumelerim.AltiElemanli(eSayisi).ToString();
+            label7.Text = kumelerim.EnFazlaIkiElemanli(eSayisi).ToString();
+            label8.Text = kumelerim.EnAzİkiElemanli(eSayisi).ToString();
         }
 
         private void Form1_Load(object sender, EventArgs e)
