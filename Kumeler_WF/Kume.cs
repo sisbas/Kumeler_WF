@@ -118,5 +118,44 @@ namespace Kumeler_WF
                     return -1;
             }
         }
+        public double EnCokİkiElemanliAltKümeSayisiVerilen(int x)
+        {
+            var y = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 1; j < i; j++)
+                {
+                    if ((i * j) == ((x - 1) * 2))
+                    {
+                        y = j; break;
+                    }
+                }
+                if (y > 0) break;
+            }
+            return y;
+        }
+        public double UcElemanliAltKumeSayisiVerilirse(bool b, int x)
+        {
+            var y = -1;
+            if (b)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    for (int j = i + 2; j < 11; j++)
+                    {
+                        if (((i * j) + 6) * (i + 1) == ((x - 1) * 6))
+                        {
+                            y = i + 1; break;
+                        }
+                    }
+                    if (y > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return y;
+        }
     }
 }
