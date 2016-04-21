@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,10 @@ namespace Kumeler_WF
         public double AltiElemanli(int x)
         {
             return (x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)) / 720;
+        }
+        public double YediElemanli(int x)
+        {
+            return (x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5) * (x - 6)) / 5040;
         }
         public double EnFazlaIkiElemanli(int x)
         {
@@ -118,23 +123,27 @@ namespace Kumeler_WF
                     return -1;
             }
         }
-        public double EnCokİkiElemanliAltKümeSayisiVerilen(int x)
+        public double EnCokİkiElemanliAltKümeSayisiVerilen(bool b, int x)
         {
             var y = 0;
-            for (int i = 0; i < 10; i++)
+            if (b)
             {
-                for (int j = 1; j < i; j++)
+                for (int i = 0; i < 10; i++)
                 {
-                    if ((i * j) == ((x - 1) * 2))
+                    for (int j = 1; j < i; j++)
                     {
-                        y = j; break;
+                        if ((i * j) == ((x - 1) * 2))
+                        {
+                            y = j; break;
+                        }
                     }
+                    if (y > 0) break;
                 }
-                if (y > 0) break;
             }
+
             return y;
         }
-        public double UcElemanliAltKumeSayisiVerilirse(bool b, int x)
+        public double EnCokUcElemanliAltKumeSayisiVerilirse(bool b, int x)
         {
             var y = -1;
             if (b)
@@ -154,7 +163,6 @@ namespace Kumeler_WF
                     }
                 }
             }
-
             return y;
         }
     }
