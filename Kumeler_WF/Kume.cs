@@ -19,6 +19,10 @@ namespace Kumeler_WF
         {
             return Math.Pow(2, x) - 1;
         }
+        public double Gicik(int x)
+        {
+            return Math.Pow(2, x);
+        }
         public double İkiElemanli(int x)
         {
             return (x * (x - 1)) / 2;

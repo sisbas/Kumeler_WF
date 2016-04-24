@@ -29,7 +29,7 @@ namespace Kumeler_WF
             kumelerim.KumeElemanlari = new List<object>();
             kumelerim.KumeElemanlari.Add(txbKume.Text.Split(',').ToList());
             var eSayisi = txbKume.Text.Split(',').ToList().Distinct().Count();
-            label5.Text = "A={" + txbKume.Text + "}";
+            lblKume.Text = "A={" + txbKume.Text + "}";
             switch (cmbIslem.SelectedIndex)
             {
                 case 0: MessageBox.Show(kumelerim.AltKume(eSayisi).ToString()); break;
@@ -49,7 +49,7 @@ namespace Kumeler_WF
                     MessageBox.Show("Lütfen bir işlem seçiniz");
                     break;
             }
-            label5.Update();
+            lblKume.Update();
             var list = txbKume.Text.Split(',').Distinct().ToList();
             for (int i = 0; i < list.Count; i++)
             {
@@ -62,6 +62,8 @@ namespace Kumeler_WF
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            txbBulunan.Visible = false;
+            btnGicik.Visible = false;
             helpProvider1 = new HelpProvider();
             helpProvider1.SetShowHelp(txbKume, true);
             helpProvider1.SetHelpString(txbKume, "Lütfen Küme Elemanlarını Aralarına virgül koyarak giriniz.");
@@ -113,20 +115,59 @@ namespace Kumeler_WF
         {
 
         }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
+        
         private void richTextBox1_TextChanged_1(object sender, EventArgs e)
         {
             
         }
+
+        private void gıcıkElemanToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            txbElemanSayisi.Hide();
+            lblBilgi1.Visible = false;
+            lblBilgi1.Visible = false;
+            lblBilgi2.Visible = false;
+            lblBilgi3.Visible = false;
+            lblBilgi4.Visible = false;
+            groupBox2.Visible = false;
+            cmbIslem.Visible = false;
+            btnAltkume.Visible = false;
+            cmbIslem2.Visible = false;
+            btnSonuc.Visible = false;
+            txbBulunan.Visible = true;
+            btnGicik.Visible = true;
+            
+        }
+
+        private void btnGicik_Click(object sender, EventArgs e)
+        {
+            if (rdoVe.Enabled)
+            {
+                kumelerim.KumeElemanlari = new List<object>();
+                if (!string.IsNullOrEmpty(txbBulunan.Text) && string.IsNullOrEmpty(txbBulunmayan.Text))
+                {
+                    var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - txbBulunan.Text.Split(',').ToList().Distinct().Count();
+                    MessageBox.Show(kumelerim.Gicik(methodaGidecek).ToString());
+                }
+                else if (!string.IsNullOrEmpty(txbBulunmayan.Text)&&string.IsNullOrEmpty(txbBulunan.Text))
+                {
+                    var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - txbBulunmayan.Text.Split(',').ToList().Distinct().Count();
+                    MessageBox.Show(kumelerim.Gicik(methodaGidecek).ToString());
+                }
+                else if (!string.IsNullOrEmpty(txbBulunan.Text) && !string.IsNullOrEmpty(txbBulunmayan.Text))
+                {
+                    var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - (txbBulunan.Text.Split(',').ToList().Distinct().Count() + txbBulunmayan.Text.Split(',').ToList().Distinct().Count());
+                    MessageBox.Show(kumelerim.Gicik(methodaGidecek).ToString());
+                }
+            }
+            else
+            {
+                var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - txbBulunan.Text.Split(',').ToList().Distinct().Count();
+                MessageBox.Show((txbKume.Text.Split(',').ToList().Distinct().Count() - kumelerim.Gicik(methodaGidecek)).ToString());
+            }
+            
+                      
+        }
+       
     }
 }
