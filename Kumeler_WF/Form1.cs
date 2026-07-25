@@ -1,61 +1,87 @@
-﻿using PRI.ProductivityExtensions.ICollectionableExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Kumeler_WF
 {
     public partial class Form1 : Form
     {
+        private readonly Kume _kume = new Kume();
+
         public Form1()
         {
             InitializeComponent();
+            InitializeHelpProvider();
         }
 
-        Kume kumelerim = new Kume();
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        private void InitializeHelpProvider()
         {
+            helpProvider1 = new HelpProvider();
+            helpProvider1.SetShowHelp(txbKume, true);
+            helpProvider1.SetHelpString(txbKume, "Lütfen Küme Elemanlarını Aralarına virgül koyarak giriniz.");
+        }
 
+        private int GetElementCount()
+        {
+            return txbKume.Text.Split(',').Distinct().Count();
+        }
+
+        private List<string> GetElementList()
+        {
+            return txbKume.Text.Split(',').Distinct().ToList();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            kumelerim.KumeElemanlari = new List<object>();
-            kumelerim.KumeElemanlari.Add(txbKume.Text.Split(',').ToList());
-            var eSayisi = txbKume.Text.Split(',').ToList().Distinct().Count();
+            _kume.KumeElemanlari = new List<object>();
+            _kume.KumeElemanlari.Add(GetElementList());
+            
+            int elementCount = GetElementCount();
             lblKume.Text = "A={" + txbKume.Text + "}";
-            switch (cmbIslem.SelectedIndex)
+            
+            ExecuteSelectedOperation(elementCount);
+            DisplayTwoElementSubsets();
+        }
+
+        private void ExecuteSelectedOperation(int elementCount)
+        {
+            double result = cmbIslem.SelectedIndex switch
             {
-                case 0: MessageBox.Show(kumelerim.AltKume(eSayisi).ToString()); break;
-                case 1: MessageBox.Show(kumelerim.OzAltKume(eSayisi).ToString()); break;
-                case 2: MessageBox.Show(kumelerim.İkiElemanli(eSayisi).ToString()); break;
-                case 3: MessageBox.Show(kumelerim.UcElemanli(eSayisi).ToString()); break;
-                case 4: MessageBox.Show(kumelerim.DortElemanli(eSayisi).ToString()); break;
-                case 5: MessageBox.Show(kumelerim.BesElemanli(eSayisi).ToString()); break;
-                case 6: MessageBox.Show(kumelerim.AltiElemanli(eSayisi).ToString()); break;
-                case 7: MessageBox.Show(kumelerim.YediElemanli(eSayisi).ToString()); break;
-                case 8: MessageBox.Show(kumelerim.EnAzİkiElemanli(eSayisi).ToString()); break;
-                case 9: MessageBox.Show(kumelerim.EnAzUcElemanli(eSayisi).ToString()); break;
-                case 10: MessageBox.Show(kumelerim.EnAzDortElemanli(eSayisi).ToString()); break;
-                case 11: MessageBox.Show(kumelerim.EnAzBesElemanli(eSayisi).ToString()); break;
-                case 12: MessageBox.Show(kumelerim.EnAzAltiElemanli(eSayisi).ToString()); break;
-                default:
-                    MessageBox.Show("Lütfen bir işlem seçiniz");
-                    break;
-            }
+                0 => _kume.AltKume(elementCount),
+                1 => _kume.OzAltKume(elementCount),
+                2 => _kume.İkiElemanli(elementCount),
+                3 => _kume.UcElemanli(elementCount),
+                4 => _kume.DortElemanli(elementCount),
+                5 => _kume.BesElemanli(elementCount),
+                6 => _kume.AltiElemanli(elementCount),
+                7 => _kume.YediElemanli(elementCount),
+                8 => _kume.EnAzİkiElemanli(elementCount),
+                9 => _kume.EnAzUcElemanli(elementCount),
+                10 => _kume.EnAzDortElemanli(elementCount),
+                11 => _kume.EnAzBesElemanli(elementCount),
+                12 => _kume.EnAzAltiElemanli(elementCount),
+                _ => -1
+            };
+
+            if (result == -1)
+                MessageBox.Show("Lütfen bir işlem seçiniz");
+            else
+                MessageBox.Show(result.ToString());
+            
             lblKume.Update();
-            var list = txbKume.Text.Split(',').Distinct().ToList();
-            for (int i = 0; i < list.Count; i++)
+        }
+
+        private void DisplayTwoElementSubsets()
+        {
+            var elements = GetElementList();
+            richTextBox1.Clear();
+            
+            for (int i = 0; i < elements.Count; i++)
             {
-                for (int j = i + 1; j < list.Count; j++)
+                for (int j = i + 1; j < elements.Count; j++)
                 {
-                    richTextBox1.AppendText("{" + list[i] + " , " + list[j] + "}" + "\t");
+                    richTextBox1.AppendText($"{{{elements[i]} , {elements[j]}}}\t");
                 }
             }
         }
@@ -64,110 +90,77 @@ namespace Kumeler_WF
         {
             txbBulunan.Visible = false;
             btnGicik.Visible = false;
-            helpProvider1 = new HelpProvider();
-            helpProvider1.SetShowHelp(txbKume, true);
-            helpProvider1.SetHelpString(txbKume, "Lütfen Küme Elemanlarını Aralarına virgül koyarak giriniz.");
-
-        }
-
-        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
-        {
-
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var sonuc = 0;
-            bool c = false;
-            var eSayisi = txbKume.Text.Split(',').ToList().Distinct().Count();
-            var AltKumeSayisiVerilirse = txbElemanSayisi.Text;
-            if (int.TryParse(AltKumeSayisiVerilirse, out sonuc))
-                c = true;
-
-            //label9.Text = kumelerim.UcElemanliAltKumeSayisiVerilirse(c, sonuc).ToString();
-            switch (cmbIslem2.SelectedIndex)
+            if (!int.TryParse(txbElemanSayisi.Text, out int subsetCount))
             {
-                
-                case 0: MessageBox.Show(kumelerim.EnCokİkiElemanliAltKümeSayisiVerilen(c, sonuc).ToString()); break;
-                case 1: MessageBox.Show(kumelerim.EnCokUcElemanliAltKumeSayisiVerilirse(c, sonuc).ToString()); break;
-                default:
-                    MessageBox.Show("Lütfen bir işlem seçiniz");
-                    break;
+                MessageBox.Show("Lütfen geçerli bir sayı giriniz.");
+                return;
             }
-        }
 
-        private void txbKume_TextChanged(object sender, EventArgs e)
-        {
+            bool isValid = true;
             
-        }
+            double result = cmbIslem2.SelectedIndex switch
+            {
+                0 => _kume.EnCokİkiElemanliAltKümeSayisiVerilen(isValid, subsetCount),
+                1 => _kume.EnCokUcElemanliAltKumeSayisiVerilirse(isValid, subsetCount),
+                _ => -1
+            };
 
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-        
-        private void richTextBox1_TextChanged_1(object sender, EventArgs e)
-        {
-            
+            if (result == -1)
+                MessageBox.Show("Lütfen bir işlem seçiniz");
+            else
+                MessageBox.Show(result.ToString());
         }
 
         private void gıcıkElemanToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            txbElemanSayisi.Hide();
-            lblBilgi1.Visible = false;
-            lblBilgi1.Visible = false;
-            lblBilgi2.Visible = false;
-            lblBilgi3.Visible = false;
-            lblBilgi4.Visible = false;
-            groupBox2.Visible = false;
-            cmbIslem.Visible = false;
-            btnAltkume.Visible = false;
-            cmbIslem2.Visible = false;
-            btnSonuc.Visible = false;
-            txbBulunan.Visible = true;
-            btnGicik.Visible = true;
-            
+            ToggleGicikElemanMode(true);
+        }
+
+        private void ToggleGicikElemanMode(bool showGicik)
+        {
+            txbElemanSayisi.Visible = !showGicik;
+            lblBilgi1.Visible = !showGicik;
+            lblBilgi2.Visible = !showGicik;
+            lblBilgi3.Visible = !showGicik;
+            lblBilgi4.Visible = !showGicik;
+            groupBox2.Visible = !showGicik;
+            cmbIslem.Visible = !showGicik;
+            btnAltkume.Visible = !showGicik;
+            cmbIslem2.Visible = !showGicik;
+            btnSonuc.Visible = !showGicik;
+            txbBulunan.Visible = showGicik;
+            btnGicik.Visible = showGicik;
         }
 
         private void btnGicik_Click(object sender, EventArgs e)
         {
-            if (rdoVe.Enabled)
-            {
-                kumelerim.KumeElemanlari = new List<object>();
-                if (!string.IsNullOrEmpty(txbBulunan.Text) && string.IsNullOrEmpty(txbBulunmayan.Text))
-                {
-                    var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - txbBulunan.Text.Split(',').ToList().Distinct().Count();
-                    MessageBox.Show(kumelerim.Gicik(methodaGidecek).ToString());
-                }
-                else if (!string.IsNullOrEmpty(txbBulunmayan.Text)&&string.IsNullOrEmpty(txbBulunan.Text))
-                {
-                    var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - txbBulunmayan.Text.Split(',').ToList().Distinct().Count();
-                    MessageBox.Show(kumelerim.Gicik(methodaGidecek).ToString());
-                }
-                else if (!string.IsNullOrEmpty(txbBulunan.Text) && !string.IsNullOrEmpty(txbBulunmayan.Text))
-                {
-                    var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - (txbBulunan.Text.Split(',').ToList().Distinct().Count() + txbBulunmayan.Text.Split(',').ToList().Distinct().Count());
-                    MessageBox.Show(kumelerim.Gicik(methodaGidecek).ToString());
-                }
-            }
-            else
-            {
-                var methodaGidecek = txbKume.Text.Split(',').ToList().Distinct().Count() - txbBulunan.Text.Split(',').ToList().Distinct().Count();
-                MessageBox.Show((txbKume.Text.Split(',').ToList().Distinct().Count() - kumelerim.Gicik(methodaGidecek)).ToString());
-            }
-            
-                      
+            int totalElements = GetElementCount();
+            int foundCount = string.IsNullOrEmpty(txbBulunan.Text) ? 0 : txbBulunan.Text.Split(',').Distinct().Count();
+            int notFoundCount = string.IsNullOrEmpty(txbBulunmayan.Text) ? 0 : txbBulunmayan.Text.Split(',').Distinct().Count();
+
+            int remainingElements = rdoVe.Checked 
+                ? totalElements - (foundCount + notFoundCount)
+                : totalElements - foundCount;
+
+            double result = rdoVe.Checked 
+                ? _kume.Gicik(remainingElements)
+                : totalElements - _kume.Gicik(remainingElements);
+
+            MessageBox.Show(result.ToString());
         }
-       
+
+        #region Event Handlers (Empty/Unused)
+        private void richTextBox1_TextChanged(object sender, EventArgs e) { }
+        private void vScrollBar1_Scroll(object sender, ScrollEventArgs e) { }
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) { }
+        private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e) { }
+        private void txbKume_TextChanged(object sender, EventArgs e) { }
+        private void groupBox1_Enter(object sender, EventArgs e) { }
+        private void richTextBox1_TextChanged_1(object sender, EventArgs e) { }
+        #endregion
     }
 }
