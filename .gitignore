@@ -1,1 +1,19 @@
-Nothing to output - the change list contains only a source/config file (README.md) with no build artifacts, dependencies, or temp files that need to be ignored.
+```
+# Build artifacts
+*.exe
+*.dll
+*.pdb
+*.userprefs
+*.cache
+*.compiled
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+.vs/
+*.sln.cache
+*.csproj.user
+*.userosscache
+*.suo
+```
